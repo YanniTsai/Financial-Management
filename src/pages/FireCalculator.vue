@@ -1,5 +1,5 @@
 <template>
-    <div class="q-pa-md bg-grey-10 text-grey-1">
+    <div class="q-pa-md bg-grey-10 text-grey-1 window-width">
         <h3>FIRE 🔥🔥🔥</h3>
         <div class="grid q-mb-md">
             <div class="input-field flex column q-pa-md" v-for="column in inputColumns" :key="column.field">
@@ -37,31 +37,33 @@
             </div>
         </div>
 
-        <details open>
-            <summary>{{ yearsToFire }} 年資產走勢（年末）</summary>
+        <!-- <details open> -->
+        <summary>{{ yearsToFire }} 年資產走勢（年末）</summary>
+        <div class="full-width overflow-auto">
             <table>
-            <thead>
-                <tr>
-                <th>年份</th>
-                <th>年度投入</th>
-                <th>年末資產</th>
-                <th>當年 FIRE 目標（含通膨）</th>
-                <th>差距</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="row in projection" :key="row.year">
-                <td>{{ row.year }}</td>
-                <td>{{ fmtCurrency(row.contribution) }}</td>
-                <td>{{ fmtCurrency(row.endBalance) }}</td>
-                <td>{{ fmtCurrency(row.fiTargetThisYear) }}</td>
-                <td :class="{'ok': row.gap <= 0, 'warn': row.gap > 0}">
-                    {{ fmtCurrency(row.gap) }}
-                </td>
-                </tr>
-            </tbody>
+                <thead>
+                    <tr>
+                    <th>年份</th>
+                    <th>年度投入</th>
+                    <th>年末資產</th>
+                    <th>當年 FIRE 目標（含通膨）</th>
+                    <th>差距</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="row in projection" :key="row.year">
+                    <td>{{ row.year }}</td>
+                    <td>{{ fmtCurrency(row.contribution) }}</td>
+                    <td>{{ fmtCurrency(row.endBalance) }}</td>
+                    <td>{{ fmtCurrency(row.fiTargetThisYear) }}</td>
+                    <td :class="{'ok': row.gap <= 0, 'warn': row.gap > 0}">
+                        {{ fmtCurrency(row.gap) }}
+                    </td>
+                    </tr>
+                </tbody>
             </table>
-        </details>
+        </div>
+        <!-- </details> -->
     </div>
 </template>
 
@@ -92,10 +94,10 @@ const inputColumns: {field: InputField, label: string}[] = [
     {field: 'currentAssets', label: '現有資產'},
     {field: 'annualIncome', label: '年收入'},
     {field: 'annualExpense', label: '年支出'},
-    {field: 'dividendReturnRatePct', label: '高股息報酬率'},
-    {field: 'growthReturnRatePct', label: '成長股報酬率'},
+    {field: 'dividendReturnRatePct', label: '高股息報酬率 %'},
+    {field: 'growthReturnRatePct', label: '成長股報酬率 %'},
     {field: 'growthAllocationPct', label: '成長股比例 %'},
-    {field: 'inflationRatePct', label: '通膨率'},
+    {field: 'inflationRatePct', label: '通膨率 %'},
     {field: 'fireRatePct', label: 'FIRE 提領率 %'},
 ]
 
@@ -236,7 +238,8 @@ details {
 }
 
 summary { 
-    cursor: pointer; 
+    width: 100%;
+    // cursor: pointer; 
     padding: 8px 0; 
     font-weight: 600; 
 }
@@ -244,7 +247,7 @@ summary {
 table { 
     width: 100%; 
     border-collapse: collapse; 
-    overflow: hidden; 
+    // overflow: hidden; 
     border-radius: 12px; 
 }
 
@@ -257,7 +260,34 @@ thead th {
   color: #cbd5e1;
 }
 
-tbody td { padding: 10px; border-bottom: 1px solid #1f2937; font-size: 14px; }
+tbody td { 
+    padding: 8px; 
+    border-bottom: 1px solid #1f2937; 
+    font-size: 14px; 
+}
+
+thead th:first-child,
+tbody td:first-child {
+  position: sticky;
+  left: 0;
+  background: #0b1222; /* 固定欄背景色，避免透明 */
+  z-index: 2; /* 確保在其他欄位之上 */
+}
+
+thead th:first-child{
+  background: #0b1222; /* 固定欄背景色，避免透明 */
+}
+
+tbody td:first-child {
+  background: #212121; /* 固定欄背景色，避免透明 */
+}
+
+
+/* 如果要讓表頭的年份欄更高層級，避免被其他元素蓋住 */
+thead th:first-child {
+  z-index: 3;
+}
+
 .ok { 
     color: #16a34a; 
     font-weight: 700; 
