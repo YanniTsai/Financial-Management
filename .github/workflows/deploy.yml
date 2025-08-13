@@ -3,17 +3,23 @@ name: Deploy Quasar to GitHub Pages
 on:
   push:
     branches:
-      - master
+      - master # 監聽 master 分支的推送
 
+# 設定 GITHUB_TOKEN 的權限，以允許部署到 GitHub Pages
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
+# 允許一個並行的部署
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
 
+jobs:
+  # 建置任務
+  build:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,8 +35,23 @@ jobs:
       - name: Build Quasar project
         run: npx quasar build
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist/spa
+          # 從這個資料夾上傳
+          path: './dist/spa'
+
+  # 部署任務
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build # 只有在 build 任務成功後才執行
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4 # 使用官方的部署 Action
