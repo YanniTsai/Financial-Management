@@ -50,10 +50,10 @@ export default defineConfig((/* ctx */) => {
 
       // rebuildCache: true, // rebuilds Vite/linter/etc cache on startup
 
-      // publicPath: '/',
-      vite: {
-        base: process.env.NODE_ENV === 'production' ? '/Financial-Management/' : '/',
-      },
+      publicPath: '/Financial-Management/',
+      // vite: {
+      //   base: process.env.NODE_ENV === 'production' ? '/Financial-Management/' : '/',
+      // },
       // analyze: true,
       // env: {},
       // rawDefine: {}
